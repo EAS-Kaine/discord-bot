@@ -34,8 +34,9 @@ func Db() {
 		User:   user,
 		Passwd: pass,
 		Net:    "tcp",
-		Addr:   ":3306",
-		DBName: "bot",
+		Addr:   "127.0.0.1:3306",
+		DBName: "mysql",
+		AllowNativePasswords: true,
 	}
 	
 	

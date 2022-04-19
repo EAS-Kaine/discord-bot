@@ -6,5 +6,5 @@ import (
 
 func main() {
 	utils.Db()
-	utils.Bot()
+	// utils.Bot()
 }
