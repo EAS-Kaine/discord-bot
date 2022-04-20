@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	discord "github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -17,40 +20,49 @@ func Bot() {
 	token := os.Getenv("TOKEN")
 
 	// Create a new Discordgo session
-	disc, err := discord.New(token)
+	disc, err := discord.New("Bot " + token)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	
-	// Create an new Application
-	ap := &discord.Application{}
-	ap.Name = "TestApp"
-	ap.Description = "TestDesc"
-	ap, err = disc.ApplicationCreate(ap)
-	log.Printf("ApplicationCreate: err: %+v, app: %+v\n", err, ap)
 
-	// Get a specific Application by it's ID
-	ap, err = disc.Application(ap.ID)
-	log.Printf("Application: err: %+v, app: %+v\n", err, ap)
+	disc.AddHandler(messageCreate)
 
-	// Update an existing Application with new values
-	ap.Description = "Whooooa"
-	ap, err = disc.ApplicationUpdate(ap.ID, ap)
-	log.Printf("ApplicationUpdate: err: %+v, app: %+v\n", err, ap)
+	// In this example, we only care about receiving message events.
+	disc.Identify.Intents = discord.IntentsGuildMessages
 
-	// Create a new bot account for this application
-	bot, err := disc.ApplicationBotCreate(ap.ID)
-	log.Printf("BotCreate: err: %+v, bot: %+v\n", err, bot)
-
-	// Get a list of all applications for the authenticated user
-	apps, err := disc.Applications()
-	log.Printf("Applications: err: %+v, apps : %+v\n", err, apps)
-	for k, v := range apps {
-		log.Printf("Applications: %d : %+v\n", k, v)
+	// Open a websocket connection to Discord and begin listening.
+	err = disc.Open()
+	if err != nil {
+		fmt.Println("error opening connection,", err)
+		return
 	}
 
-	// Delete the application
-	err = disc.ApplicationDelete(ap.ID)
-	log.Printf("Delete: err: %+v\n", err)
+	// Wait here until CTRL-C or other term signal is received.
+	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+	
+	disc.Close()
+}
+
+// This function will be called (due to AddHandler above) every time a new
+// message is created on any channel that the authenticated bot has access to.
+func messageCreate(s *discord.Session, m *discord.MessageCreate) {
+
+	// Ignore all messages created by the bot itself
+	// This isn't required in this specific example but it's a good practice.
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+	// If the message is "ping" reply with "Pong!"
+	if m.Content == "ping" {
+		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	}
+
+	// If the message is "pong" reply with "Ping!"
+	if m.Content == "pong" {
+		s.ChannelMessageSend(m.ChannelID, "Ping!")
+	}
 }

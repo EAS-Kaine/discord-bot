@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	utils.Db()
-	// utils.Bot()
+	// utils.Db()
+	utils.Bot()
 }
