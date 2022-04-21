@@ -4,10 +4,11 @@ import "gorm.io/gorm"
 
 type Action struct {
 	gorm.Model
+	Name string
 	Url string
-	Command string
-	Permission int
-	Lock bool
+	// Commands []string 
+	// Permission int
+	// Lock bool
 }
 
 type Actions []Action

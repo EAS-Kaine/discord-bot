@@ -16,7 +16,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const commands = `^!quiz\s|!quote\s|!image\s|!fact\s`
+// const commands = `^!bot\s|^!quiz\s|!quote\s|!image\s|!fact\s`
 
 func Bot() {
 	err := godotenv.Load()
@@ -69,85 +69,27 @@ func messageCreate(s *discord.Session, m *discord.MessageCreate) {
 
 	// If message is a command
 	if match {
-		r, err := regexp.Compile(commands)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if r.MatchString(m.Content) {
-			handleCommands(s, m)
-		} else {
-			switch m.Content {
-				case "!quiz": 
-					s.ChannelMessageSend(m.ChannelID, "Quiz actions: ")
-				case "!quote": 
-					s.ChannelMessageSend(m.ChannelID, "Quote actions: \n !quote all    !quote add")
-				case "!image": 
-					s.ChannelMessageSend(m.ChannelID, "Image actions: ")
-				case "!fact": 
-					s.ChannelMessageSend(m.ChannelID, "Fact actions: ")
-				default:
-					s.ChannelMessageSend(m.ChannelID, "I am not aware of this command!")
-			}
-		}
-
-	// fmt.Println(m.Author.ID, m.ChannelID)
-
-	// app, err := s.Application("966007607171121252")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// fmt.Println(app)
-
-	// user, err := s.GuildMember(app.GuildID, m.Author.ID)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(user)
-
-	//fmt.Println(s.GuildRoles())
-
-	// fmt.Println(s.UserChannelPermissions(m.Author.ID, m.ChannelID))
-	
-		// default:
-		// 	s.ChannelMessageSend(m.ChannelID, "I am not aware of this command!")
-		// case "!createAction":
-		// 	if admin(s, m) {
-		// 		s.ChannelMessageSend(m.ChannelID, "Let's create an action! \n ")
-				
-		// 		// createAction("MOCK ACTION", 0)
-		// 	} else {
-		// 		s.ChannelMessageSend(m.ChannelID, "You need to be an admin to do that!")
-		// 	}
-		
-		// case "!listActions":
-		// 	if admin(s, m) {
-		// 		// listActions()
-		// 	} else {
-		// 		s.ChannelMessageSend(m.ChannelID, "You need to be an admin to do that!")
-		// 	}
-		// case "!deleteAction":
-		// 	if admin(s, m) {
-		// 		// deleteAction()
-		// 	} else {
-		// 		s.ChannelMessageSend(m.ChannelID, "You need to be an admin to do that!")
-		// 	}
-		// }
+		handleCommands(s, m)
 	}
 }
 
 func handleCommands(s *discord.Session, m *discord.MessageCreate) {
-	// !quiz commands
-	if strings.HasPrefix(m.Content, "!quiz") && len(strings.Split(m.Content, " ")) == 2 {
-		controllers.HandleQuiz(s, m)
-	} else if strings.HasPrefix(m.Content, "!quote") && len(strings.Split(m.Content, " ")) == 2 {
-		controllers.HandleQuote(s, m)
-	} else if strings.HasPrefix(m.Content, "!image") && len(strings.Split(m.Content, " ")) == 2 {
-		controllers.HandleImage(s, m)
-	} else if strings.HasPrefix(m.Content, "!fact") && len(strings.Split(m.Content, " ")) == 2 {
-		controllers.HandleFact(s, m)
+	if strings.HasPrefix(m.Content, "!bot") {
+		controllers.HandleActions(s, m, DB)
 	} else {
-		s.ChannelMessageSend(m.ChannelID, "I am not aware of this command!")
+		name, url := controllers.GetAction(s, m, DB)
+		fmt.Println(name, url)
+		fmt.Println(controllers.Validate(s, m, url))
+		data := controllers.Validate(s, m, url)
+		if  data["status_message"] == "valid_command" {
+			data := controllers.Command(s, m, url)
+			msg, ok := data["discord_message"].(string)
+			if !ok {
+				log.Fatal()
+			}
+			s.ChannelMessageSend(m.ChannelID, msg)
+		}
 	}
+	
 
 }

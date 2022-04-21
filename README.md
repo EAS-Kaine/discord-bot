@@ -8,6 +8,10 @@ Tasked with producing microservices, which utilise a database for storage, this 
     go run main.go
 ```
 
+## NOTES
+
+- roles, username sent in every request header
+
 ## MVP
 
 - [x] MySQL DB (Containerised?)

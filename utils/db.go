@@ -35,6 +35,7 @@ func SetupDB() {
 		Addr:   "127.0.0.1:3306",
 		DBName: "mysql",
 		AllowNativePasswords: true,
+		ParseTime: true,
 	}
 	
 	
@@ -62,7 +63,6 @@ func SetupDB() {
 	fmt.Println("Connected!")
 
 	// Migrate the schemas
-	DB.AutoMigrate(&models.User{})
-	DB.AutoMigrate(&models.Action{})
-	DB.AutoMigrate(&models.Quiz{})
+	DB.AutoMigrate(&models.User{}, &models.Action{})
+	// DB.AutoMigrate(&models.Quiz{})
 }
