@@ -24,7 +24,7 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 - [ ] Concurrently handle connections
 
-- [x]Handle syscall.ECONNREFUSED
+- [x] Handle syscall.ECONNREFUSED
 
 - [ ] Roles included in request headers
 
