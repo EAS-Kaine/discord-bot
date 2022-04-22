@@ -30,19 +30,9 @@ func Validate(s *discord.Session, m *discord.MessageCreate, u string) map[string
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
+		s.ChannelMessageSend(m.ChannelID, "This service is currently unavailable")
+		return make(map[string]interface{})
 	}
-	defer resp.Body.Close()
-
-	// var bodyString string
-	
-	// if resp.StatusCode == http.StatusOK {
-	// 	bodyBytes, err := io.ReadAll(resp.Body)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
-	// 	bodyString = string(bodyBytes)
-	// 	return bodyString
-	// }
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -54,6 +44,8 @@ func Validate(s *discord.Session, m *discord.MessageCreate, u string) map[string
         log.Println(err)
     }
     fmt.Println(dat)
+
+	defer resp.Body.Close()
 
 	return dat
 }

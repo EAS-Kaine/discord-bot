@@ -102,33 +102,7 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 			s.ChannelMessageSendComplex(m.ChannelID, &msg)
 		}
 
-		//handle connection refused
-
-		// {status: "success", status_message: "lmgtfy", discord_message_complex: {
-		// 	content: `https://lmgtfy.app/?q=${encodeURIComponent(query.join(" "))}`,
-		// 	components: [
-		// 	  {
-		// 		"type": 1,
-		// 		"components": [
-		// 		  {
-		// 			"custom_id": `row_1_select_0`,
-		// 			"placeholder": `select something dickhead`,
-		// 			"options": [],
-		// 			"min_values": 1,
-		// 			"max_values": 1,
-		// 			"type": 3
-		// 		  }
-		// 		]
-		// 	  }
-		// 	]
-		//   }
-		// }
-
-		// GET http://andrew.easlab.co.uk:8080/api/command/lmgtfy%2Ctest <nil>
-		// map[discord_message_complex:map[components:[map[components:[map[custom_id:row_1_select_0 max_values:1 m
-		// in_values:1 options:[] placeholder:select something dickhead type:3]] type:1]] content:https://lmgtfy.a
-		// pp/?q=test] status:success status_message:lmgtfy]                                                      
-		// 2022/04/22 12:02:40                                                                                    
-		// exit status 1                                           
+		//!bot actions list
+		                                         
 	}
 }
