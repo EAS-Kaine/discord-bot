@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	discord "github.com/bwmarrin/discordgo"
 )
@@ -16,7 +17,9 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 	cmd := strings.SplitAfter(m.Content, "!")
 	cmd = strings.Split(cmd[1], " ")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
 
 	req, err := http.NewRequest("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	fmt.Println("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
