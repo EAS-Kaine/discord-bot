@@ -9,6 +9,11 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
     ports:
       - 3306:3306
+    volumes:
+      - db-data:/var/lib/mysql/data
+
+volumes:
+  db-data:
 
   adminer:
     image: adminer

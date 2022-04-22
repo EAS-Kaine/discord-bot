@@ -6,19 +6,20 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	discord "github.com/bwmarrin/discordgo"
 )
 
-func Command(s *discord.Session, m *discord.MessageCreate, url string) map[string]interface{} {
+func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]interface{} {
 	cmd := strings.SplitAfter(m.Content, "!")
 	cmd = strings.Split(cmd[1], " ")
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", url + "api/command/" + cmd[0] + "," + cmd[1], nil)
-	fmt.Println("GET", url + "api/command/" + cmd[0] + "," + cmd[1], nil)
+	req, err := http.NewRequest("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
+	fmt.Println("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,19 +6,22 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 
 	discord "github.com/bwmarrin/discordgo"
 )
 
-func Validate(s *discord.Session, m *discord.MessageCreate, url string) map[string]interface{} {
+func Validate(s *discord.Session, m *discord.MessageCreate, u string) map[string]interface{} {
 	cmd := strings.SplitAfter(m.Content, "!")
 	cmd = strings.Split(cmd[1], " ")
 
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", url + "api/validate/" + cmd[0] + "," + cmd[1], nil)
-	fmt.Println("GET", url + "api/validate/" + cmd[0] + "," + cmd[1], nil)
+	
+
+	req, err := http.NewRequest("GET", u + "api/validate/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
+	fmt.Println("GET", u + "api/validate/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
