@@ -90,7 +90,7 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 			data := controllers.Command(s, m, url)
 			msg, ok := data["discord_message"].(string)
 			if !ok {
-				log.Fatal()
+				log.Println()
 			}
 			s.ChannelMessageSend(m.ChannelID, msg)
 		} else if msg, _ := data["discord_message"].(string); msg != "" {
@@ -101,6 +101,8 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 		} else if msg.Content != "" {
 			s.ChannelMessageSendComplex(m.ChannelID, &msg)
 		}
+
+		//handle connection refused
 
 		// {status: "success", status_message: "lmgtfy", discord_message_complex: {
 		// 	content: `https://lmgtfy.app/?q=${encodeURIComponent(query.join(" "))}`,

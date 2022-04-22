@@ -37,7 +37,7 @@ func addFact(s *discord.Session, m *discord.MessageCreate) {
 
 		data, err := json.Marshal(values)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	
 		response, err := http.Post(
@@ -46,7 +46,7 @@ func addFact(s *discord.Session, m *discord.MessageCreate) {
 			bytes.NewBuffer(data),
 		)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	
 		q := models.Fact{}
@@ -66,16 +66,16 @@ func deleteFact(s *discord.Session) {
 func allFact(s *discord.Session, m *discord.MessageCreate) {
 	response, err := http.Get("http://localhost:3000/facts")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	q := []models.Fact{}
 	jsonErr := json.Unmarshal(data, &q)
 	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		log.Println(jsonErr)
 	}
 	for _, v := range q {
 		s.ChannelMessageSend(m.ChannelID, string(v.Subject))

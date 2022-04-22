@@ -21,13 +21,13 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 	req, err := http.NewRequest("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	fmt.Println("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	req.Header.Add("user", m.Author.Username)
 	// req.Header.Add("role", )
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer resp.Body.Close()
 
@@ -36,7 +36,7 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 	// if resp.StatusCode == http.StatusOK {
 	// 	bodyBytes, err := io.ReadAll(resp.Body)
 	// 	if err != nil {
-	// 		log.Fatal(err)
+	// 		log.Println(err)
 	// 	}
 	// 	bodyString = string(bodyBytes)
 	// 	return bodyString
@@ -44,12 +44,12 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	// bodyString = string(bodyBytes)
 	var dat map[string]interface{}
 	if err := json.Unmarshal(bodyBytes, &dat); err != nil {
-        panic(err)
+        log.Println(err)
     }
     fmt.Println(dat)
 

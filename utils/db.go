@@ -21,7 +21,7 @@ var DB *gorm.DB
 func SetupDB() {
 	err := godotenv.Load()
 	if err != nil {
-	  log.Fatal("Error loading .env file")
+	  log.Println("Error loading .env file")
 	}
   
 	user := os.Getenv("DBUSER")
@@ -53,12 +53,12 @@ func SetupDB() {
 	}), &gorm.Config{})
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	
 	pingErr := sqlDB.Ping()
 	if pingErr != nil {
-		log.Fatal(pingErr)
+		log.Println(pingErr)
 	}
 	fmt.Println("Connected!")
 

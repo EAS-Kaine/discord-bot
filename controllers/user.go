@@ -9,7 +9,7 @@ import (
 func Admin(s *discord.Session, m *discord.MessageCreate) bool {
 	perms, err := s.UserChannelPermissions(m.Author.ID, m.ChannelID)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	if perms&discord.PermissionAdministrator == 8 {
