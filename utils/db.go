@@ -43,7 +43,6 @@ func SetupDB() {
 	if err != nil {
 		panic(err)
 	}
-	// See "Important settings" section.
 	sqlDB.SetConnMaxLifetime(time.Minute * 3)
 	sqlDB.SetMaxOpenConns(10)
 	sqlDB.SetMaxIdleConns(10)
@@ -64,5 +63,4 @@ func SetupDB() {
 
 	// Migrate the schemas
 	DB.AutoMigrate(&models.User{}, &models.Action{})
-	// DB.AutoMigrate(&models.Quiz{})
 }
