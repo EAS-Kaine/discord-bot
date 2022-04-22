@@ -12,15 +12,13 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+
+	"github.com/eas-kaine/discord-bot/models"
 )
 
-type User struct {
-	gorm.Model
-	Name string
-	Permission int
-}
+var DB *gorm.DB
 
-func Db() {
+func SetupDB() {
 	err := godotenv.Load()
 	if err != nil {
 	  log.Fatal("Error loading .env file")
@@ -37,6 +35,7 @@ func Db() {
 		Addr:   "127.0.0.1:3306",
 		DBName: "mysql",
 		AllowNativePasswords: true,
+		ParseTime: true,
 	}
 	
 	
@@ -49,9 +48,13 @@ func Db() {
 	sqlDB.SetMaxOpenConns(10)
 	sqlDB.SetMaxIdleConns(10)
 
-	db, err := gorm.Open(gormsql.New(gormsql.Config{
+	DB, err = gorm.Open(gormsql.New(gormsql.Config{
 		Conn: sqlDB,
 	}), &gorm.Config{})
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	
 	pingErr := sqlDB.Ping()
 	if pingErr != nil {
@@ -59,6 +62,7 @@ func Db() {
 	}
 	fmt.Println("Connected!")
 
-	// Migrate the schema
-	db.AutoMigrate(&User{})
+	// Migrate the schemas
+	DB.AutoMigrate(&models.User{}, &models.Action{})
+	// DB.AutoMigrate(&models.Quiz{})
 }
