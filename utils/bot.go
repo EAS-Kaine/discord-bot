@@ -12,7 +12,6 @@ import (
 	discord "github.com/bwmarrin/discordgo"
 
 	"github.com/eas-kaine/discord-bot/controllers"
-	// "github.com/eas-kaine/discord-bot/models"
 	"github.com/joho/godotenv"
 )
 
