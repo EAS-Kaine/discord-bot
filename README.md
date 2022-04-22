@@ -36,8 +36,6 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 - [ ] User permissions
 
-- [ ] standard syn/ack stuff
-
 - [x] adding/listing/removing actions from the db with user group permissions
 
 ## Diagram
