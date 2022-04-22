@@ -20,9 +20,15 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 ## NOTES
 
-- roles, username sent in every request header
+## Features
 
-## MVP
+- [ ] Concurrently handle connections
+
+- [x]Handle syscall.ECONNREFUSED
+
+- [ ] Roles included in request headers
+
+- [ ] Callbacks
 
 - [x] MySQL DB (Containerised?)
 
@@ -30,7 +36,7 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 - [ ] standard syn/ack stuff
 
-- [ ] adding/listing/removing actions from the db with user group permissions
+- [x] adding/listing/removing actions from the db with user group permissions
 
 ## Diagram
 
