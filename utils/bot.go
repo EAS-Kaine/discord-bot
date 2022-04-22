@@ -17,8 +17,6 @@ import (
 
 var guild string
 
-// const commands = `^!bot\s|^!quiz\s|!quote\s|!image\s|!fact\s`
-
 func Bot() {
 	err := godotenv.Load()
 	if err != nil {
@@ -37,9 +35,8 @@ func Bot() {
 
 	disc.AddHandler(messageCreate)
 
-	// In this example, we only care about receiving message events.
-	disc.Identify.Intents = discord.IntentsGuilds | discord.IntentsGuildMessages
-	// discord.IntentsGuilds | discord.IntentsGuildMessages | discord.IntentsGuildMembers
+	// Defining intents
+	disc.Identify.Intents = discord.IntentsGuilds | discord.IntentsGuildMessages // | discord.IntentsGuildMembers
 
 	// Open a websocket connection to Discord and begin listening.
 	err = disc.Open()
@@ -57,14 +54,11 @@ func Bot() {
 	disc.Close()
 }
 
-// This function will be called (due to AddHandler above) every time a new
-// message is created on any channel that the authenticated bot has access to.
 func messageCreate(s *discord.Session, m *discord.MessageCreate) {
 
 	// fmt.Println(s.GuildMembers(guild, m.Author.ID, 1000))
 
 	// Ignore all messages created by the bot itself
-	// This isn't required in this specific example but it's a good practice.
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
