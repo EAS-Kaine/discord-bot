@@ -8,6 +8,16 @@ Tasked with producing microservices, which utilise a database for storage, this 
     go run main.go
 ```
 
+## Expected API response format
+
+```
+// Expected validation response on /api/validation/appname,command
+{"status":"success","status_message":"valid_command"}
+
+// Expected successful command response on /api/command/appname,command
+{"status": "success", "status_message": "insert status message here", "discord_message": "message for discord here"}
+```
+
 ## NOTES
 
 - roles, username sent in every request header

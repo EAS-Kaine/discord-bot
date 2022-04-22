@@ -23,37 +23,29 @@ func Validate(s *discord.Session, m *discord.MessageCreate, u string) map[string
 	req, err := http.NewRequest("GET", u + "api/validate/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	fmt.Println("GET", u + "api/validate/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	req.Header.Add("user", m.Author.Username)
 	// req.Header.Add("role", )
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		s.ChannelMessageSend(m.ChannelID, "This service is currently unavailable")
+		return make(map[string]interface{})
 	}
-	defer resp.Body.Close()
-
-	// var bodyString string
-	
-	// if resp.StatusCode == http.StatusOK {
-	// 	bodyBytes, err := io.ReadAll(resp.Body)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	bodyString = string(bodyBytes)
-	// 	return bodyString
-	// }
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	// bodyString = string(bodyBytes)
 	var dat map[string]interface{}
 	if err := json.Unmarshal(bodyBytes, &dat); err != nil {
-        panic(err)
+        log.Println(err)
     }
     fmt.Println(dat)
+
+	defer resp.Body.Close()
 
 	return dat
 }

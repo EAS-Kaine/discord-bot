@@ -31,7 +31,7 @@ func createAction(s *discord.Session, m *discord.MessageCreate, cmd []string, DB
 	result := DB.Create(&action)
 
 	if result.Error != nil {
-		log.Fatal(result.Error)
+		log.Println(result.Error)
 	}
 
 	fmt.Println(action.ID)
@@ -43,7 +43,7 @@ func listActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {
 	// result := DB.Find(&actions)
 	// fmt.Println(result)
 	// if result.Error != nil {
-	// 	log.Fatal(result.Error)
+	// 	log.Println(result.Error)
 	// }
 	DB.Find(&actions)
 	fmt.Println(&actions)
