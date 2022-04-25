@@ -31,7 +31,7 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
-		s.ChannelMessageSend(m.ChannelID, "This service is currently unavailable")
+		// s.ChannelMessageSend(m.ChannelID, "This service is currently unavailable")
 		return make(map[string]interface{})
 	}
 

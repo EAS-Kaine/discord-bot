@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -22,20 +21,17 @@ func HandleActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {
 		}
 	default:
 		s.ChannelMessageSend(m.ChannelID, "Unsupported! Try a command! Like this: !bot actions add my_command url_to_my_api")
+		s.MessageReactionAdd(m.ChannelID, m.ID, "U+1F602")
 	}
 }
 
 func createAction(s *discord.Session, m *discord.MessageCreate, cmd []string, DB *gorm.DB) {
-	// , Commands: []string{cmd[5]}
 	action := models.Action{Name: cmd[3], Url: cmd[4]}
 	result := DB.Create(&action)
 
 	if result.Error != nil {
 		log.Println(result.Error)
 	}
-
-	fmt.Println(action.ID)
-	fmt.Println(result.RowsAffected)
 }
 
 func listActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {

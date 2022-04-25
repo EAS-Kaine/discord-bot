@@ -34,6 +34,7 @@ func Validate(s *discord.Session, m *discord.MessageCreate, u string) map[string
 	if err != nil {
 		log.Println(err)
 		s.ChannelMessageSend(m.ChannelID, "This service is currently unavailable")
+		
 		return make(map[string]interface{})
 	}
 
