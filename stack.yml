@@ -10,10 +10,14 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - db-data:/var/lib/mysql/data
-
+      - dbdata:/var/lib/mysql
 volumes:
-  db-data:
+  dbdata:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "/srv/db-data"
 
   adminer:
     image: adminer

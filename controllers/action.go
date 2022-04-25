@@ -21,7 +21,7 @@ func HandleActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {
 			listActions(s, m, DB)
 		}
 	default:
-		s.ChannelMessageSend(m.ChannelID, "unsupported!")
+		s.ChannelMessageSend(m.ChannelID, "Unsupported! Try a command! Like this: !bot actions add my_command url_to_my_api")
 	}
 }
 
@@ -40,14 +40,10 @@ func createAction(s *discord.Session, m *discord.MessageCreate, cmd []string, DB
 
 func listActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {
 	var actions models.Actions
-	// result := DB.Find(&actions)
-	// fmt.Println(result)
-	// if result.Error != nil {
-	// 	log.Println(result.Error)
-	// }
 	DB.Find(&actions)
-	fmt.Println(&actions)
-	// fmt.Println(result.RowsAffected)
+	for _, v := range actions {
+		s.ChannelMessageSend(m.ChannelID, v.Name)
+	}
 }
 
 func GetAction(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) (string, string) {
@@ -58,17 +54,6 @@ func GetAction(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) (strin
 	return action.Name, action.Url
 }
 
-// func CreateAction(db *gorm.DB, c string, p int) {
-
-// 	// db.Create(&models.Action{Command: c, Permission: p})
-// }
-
 func Lock() {
 	
 }
-
-// func listActions(db *gorm.DB) models.Actions {
-// 	results := db.Find(&models.Actions{})
-
-// 	return results
-// }

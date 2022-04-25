@@ -33,10 +33,10 @@ func Bot() {
 		return
 	}
 
-	disc.AddHandler(messageCreate)
+	go disc.AddHandler(messageCreate)
 
 	// Defining intents
-	disc.Identify.Intents = discord.IntentsGuilds | discord.IntentsGuildMessages // | discord.IntentsGuildMembers
+	disc.Identify.Intents = discord.IntentsGuilds | discord.IntentsGuildMessages // discord.IntentsGuildMembers
 
 	// Open a websocket connection to Discord and begin listening.
 	err = disc.Open()
@@ -72,7 +72,13 @@ func messageCreate(s *discord.Session, m *discord.MessageCreate) {
 }
 
 func handleCommands(s *discord.Session, m *discord.MessageCreate) {
+	cmd := strings.SplitAfter(m.Content, "!")
+	cmd = strings.Split(cmd[1], " ")
+
 	if strings.HasPrefix(m.Content, "!bot") {
+		if len(cmd) == 2 {
+			s.ChannelMessageSend(m.ChannelID, "Try a command! Like this: !bot actions add my_command url_to_my_api")
+		}
 		controllers.HandleActions(s, m, DB)
 	} else {
 		name, url := controllers.GetAction(s, m, DB)
@@ -96,6 +102,9 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 		}
 
 		//!bot actions list
+
+
+		// callback for quiz
 		                                         
 	}
 }
