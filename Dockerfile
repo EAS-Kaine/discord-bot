@@ -1,15 +1,10 @@
-# syntax=docker/dockerfile:1
+FROM golang:1.18.1-alpine3.15 as builder
 
-FROM golang:1.18-alpine
-
-WORKDIR /
-
-COPY go.mod ./
-COPY go.sum ./
+WORKDIR /tmp/go
+COPY ./ ./
 RUN go mod download
+RUN CGO_ENABLED=0 go build -a -ldflags '-s' -buildvcs=false -o app
 
-COPY *.go ./
-
-RUN go build -o /discord-bot
-
-CMD [ "/discord-bot" ]
+FROM scratch
+COPY --from=builder /tmp/go/app /bin/app
+CMD [ "/bin/app" ]
