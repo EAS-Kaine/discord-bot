@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"time"
 
 	discord "github.com/bwmarrin/discordgo"
 
@@ -16,6 +17,7 @@ import (
 )
 
 var guild string
+var timeout int
 
 func Bot() {
 	err := godotenv.Load()
@@ -36,7 +38,7 @@ func Bot() {
 	go disc.AddHandler(messageCreate)
 
 	// Defining intents
-	disc.Identify.Intents = discord.IntentsGuilds | discord.IntentsGuildMessages // discord.IntentsGuildMembers
+	disc.Identify.Intents = discord.IntentsGuilds | discord.IntentsGuildMessages // | discord.IntentsGuildMembers
 
 	// Open a websocket connection to Discord and begin listening.
 	err = disc.Open()
@@ -57,6 +59,13 @@ func Bot() {
 func messageCreate(s *discord.Session, m *discord.MessageCreate) {
 
 	// fmt.Println(s.GuildMembers(guild, m.Author.ID, 1000))
+
+	// roles, err := s.GuildRoles(guild)
+	// if err != nil {
+	// 	log.Print(err)
+	// }
+
+	// fmt.Println(roles[0])
 
 	// Ignore all messages created by the bot itself
 	if m.Author.ID == s.State.User.ID {
@@ -83,11 +92,20 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 	} else {
 		_, url := controllers.GetAction(s, m, DB)
 		data := controllers.Validate(s, m, url)
+		// Callback 
+		if val, ok := data["callback"]; ok {
+			// Timeout
+			if c, ok := val.(map[string]int); ok {
+				timeout = c["timeout"]
+			}
+			time.Sleep(time.Duration(timeout) * time.Second)
+			s.ChannelMessageSendReply(m.ChannelID, "Time is up!", m.Reference())
+		}
 		if  data["status_message"] == "valid_command" {
 			data := controllers.Command(s, m, url)
 			msg, ok := data["discord_message"].(string)
 			if !ok {
-				log.Println()
+				log.Println("Couldn't assert discord message as string")
 			}
 			s.ChannelMessageSendReply(m.ChannelID, msg, m.Reference())
 		} else if msg, _ := data["discord_message"].(string); msg != "" {
@@ -97,9 +115,6 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 			fmt.Println("Couldn't get discord_message_complex?")
 		} else if msg.Content != "" {
 			s.ChannelMessageSendComplex(m.ChannelID, &msg)
-		}
-		
-		// callback for quiz
-		                                         
+		}                               
 	}
 }

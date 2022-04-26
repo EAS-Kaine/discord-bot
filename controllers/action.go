@@ -32,6 +32,8 @@ func createAction(s *discord.Session, m *discord.MessageCreate, cmd []string, DB
 	if result.Error != nil {
 		log.Println(result.Error)
 	}
+
+	s.ChannelMessageSendReply(m.ChannelID, cmd[3] + " has been added!", m.Reference())
 }
 
 func listActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {
