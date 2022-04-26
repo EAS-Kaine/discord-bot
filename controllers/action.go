@@ -21,7 +21,7 @@ func HandleActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {
 		}
 	default:
 		s.ChannelMessageSend(m.ChannelID, "Unsupported! Try a command! Like this: !bot actions add my_command url_to_my_api")
-		s.MessageReactionAdd(m.ChannelID, m.ID, "U+1F602")
+		// s.MessageReactionAdd(m.ChannelID, m.ID, "U+1F602")
 	}
 }
 

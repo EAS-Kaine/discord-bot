@@ -77,13 +77,11 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 
 	if strings.HasPrefix(m.Content, "!bot") {
 		if len(cmd) == 2 {
-			s.ChannelMessageSend(m.ChannelID, "Try a command! Like this: !bot actions add my_command url_to_my_api")
+			s.ChannelMessageSendReply(m.ChannelID, "Try a command! Like this: !bot actions add my_command url_to_my_api", m.Reference())
 		}
 		controllers.HandleActions(s, m, DB)
 	} else {
-		name, url := controllers.GetAction(s, m, DB)
-		fmt.Println(name, url)
-		fmt.Println(controllers.Validate(s, m, url))
+		_, url := controllers.GetAction(s, m, DB)
 		data := controllers.Validate(s, m, url)
 		if  data["status_message"] == "valid_command" {
 			data := controllers.Command(s, m, url)
@@ -91,19 +89,16 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 			if !ok {
 				log.Println()
 			}
-			s.ChannelMessageSend(m.ChannelID, msg)
+			s.ChannelMessageSendReply(m.ChannelID, msg, m.Reference())
 		} else if msg, _ := data["discord_message"].(string); msg != "" {
-			s.ChannelMessageSend(m.ChannelID, msg)
+			s.ChannelMessageSendReply(m.ChannelID, msg, m.Reference())
 		} 
 		if msg, ok := data["discord_message_complex"].(discord.MessageSend); !ok {
 			fmt.Println("Couldn't get discord_message_complex?")
 		} else if msg.Content != "" {
 			s.ChannelMessageSendComplex(m.ChannelID, &msg)
 		}
-
-		//!bot actions list
-
-
+		
 		// callback for quiz
 		                                         
 	}

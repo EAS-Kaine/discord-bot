@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,7 +28,7 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 		log.Println(err)
 	}
 	req.Header.Add("user", m.Author.Username)
-	// req.Header.Add("role", )
+	req.Header.Add("role", strconv.FormatBool(Admin(s, m)))
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
