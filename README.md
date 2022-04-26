@@ -24,7 +24,7 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 - [x] Concurrently handle connections
 
-- [ ] Dockerfile
+- [x] Dockerfile
 
 - [x] Handle syscall.ECONNREFUSED
 
