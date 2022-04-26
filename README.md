@@ -22,13 +22,13 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 ## Features
 
-- [ ] Concurrently handle connections
+- [x] Concurrently handle connections
 
 - [ ] Dockerfile
 
 - [x] Handle syscall.ECONNREFUSED
 
-- [ ] Roles included in request headers
+- [x] Roles included in request headers
 
 - [ ] Callbacks
 
