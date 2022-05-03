@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: create-ingress-run
+  namespace: default
+spec:
+  taskRef:
+    name: create-ingress
+  params:
+    - name: CreateCertificate
+      value: "true"
+    - name: CertificateKeyPassphrase
+      value: asecretphrase
+    - name: CertificateSecretName
+      value: ingresssecret
+    - name: ExternalDomain
+      value: tekton.easlab.co.uk
+    - name: Service
+      value: el-discord-bot-listener
+    - name: ServicePort
+      value: "80"
+  timeout: 1000s
+  serviceAccountName: tekton-triggers-createwebhook

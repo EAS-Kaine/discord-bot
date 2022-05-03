@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.tools.svc.cluster.local/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "http://auth.tekton.easlab.co.uk/oauth2/sign_in?rd=http://$host$request_uri"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  name: tekton
+  namespace: tekton-pipelines
+spec:
+  rules:
+    - host: dashboard.tekton.easlab.co.uk
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: tekton-dashboard
+                port:
+                  number: 9097
+  tls:
+    - hosts:
+        - dashboard.tekton.easlab.co.uk
+      secretName: tekton-cert

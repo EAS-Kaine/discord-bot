@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: build-push-deploy-notify-run
+spec:
+  serviceAccountName: pipeline-account
+  pipelineRef:
+    name: build-push-deploy-notify
+  workspaces:
+    - name: shared-data
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+  params:
+    - name: repo-url
+      value: https://github.com/EAS-Kaine/discord-bot
+    - name: branch-name
+      value: main
+    - name: image
+      value: index.docker.io/enterpriseautomation/discord-bot:latest
+    - name: helm_repo
+      value: https://github.com/EAS-Kaine/discord-bot/discord-bot
+    - name: chart_name
+      value: discord-bot
+    - name: release_version
+      value: latest
+    - name: release_name
+      value: discord-bot
+    - name: overwrite_values
+      value: autoscaling.enabled=true,autoscaling.maxReplicas=3

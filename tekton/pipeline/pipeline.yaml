@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-push-deploy-notify
+spec:
+  params:
+    - name: repo-url
+      type: string
+    - name: branch-name
+      type: string
+    - name: image
+      type: string
+    - name: helm_repo
+      type: string
+    - name: chart_name
+      type: string
+    - name: release_version
+      type: v1.string.0
+    - name: release_name
+      type: string
+    - name: overwrite_values
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.branch-name)
+      taskRef:
+        kind: Task
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-data
+    - name: build
+      params:
+        - name: IMAGE
+          value: $(params.image)
+      runAfter:
+        - git-clone
+      taskRef:
+        name: buildah
+      workspaces:
+        - name: source
+          workspace: shared-data
+    - name: deploy
+      params:
+        - name: helm_repo
+          value: $(params.helm_repo)
+        - name: chart_name
+          value: $(params.chart_name)
+        - name: release_version
+          value: $(params.release_version)
+        - name: overwrite_values
+          value: $(params.overwrite_values)
+  workspaces:
+    - name: shared-data

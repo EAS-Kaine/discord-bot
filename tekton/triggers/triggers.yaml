@@ -1,0 +1,75 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: discord-bot-triggertemplate
+  namespace: default
+spec:
+  params:
+    - name: branch-name
+      description: Name of branch
+    - name: image
+      description: The image
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
+    - name: namespace
+      description: The namespace to create the resources
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: build-push-deploy-notify-run
+        namespace: $(tt.params.namespace)
+      spec:
+        serviceAccountName: tekton-triggers-discord-bot-sa
+        pipelineRef:
+          name: build-push-deploy-notify
+        params:
+          - name: repo-url
+            value: $(tt.params.gitrepositoryurl)
+          - name: image
+            value: $(tt.params.image)
+          - name: branch-name
+            value: $(tt.params.gitrevision)
+        workspaces:
+          - name: shared-data
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: discord-bot-pipelinebinding
+  namespace: default
+spec:
+  params:
+    - name: branch-name
+      value: $(body.ref)
+    - name: image
+      value: "enterpriseautomation/$(body.repository.name)"
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: namespace
+      value: default
+    - name: gitrepositoryurl
+      value: "https://github.com/$(body.repository.full_name)"
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: discord-bot-listener
+  namespace: default
+spec:
+  serviceAccountName: tekton-triggers-discord-bot-sa
+  triggers:
+    - bindings:
+        - ref: discord-bot-pipelinebinding
+      template:
+        ref: discord-bot-triggertemplate
