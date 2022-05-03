@@ -4,9 +4,11 @@ import (
 	"log"
 	"strings"
 
-	discord "github.com/bwmarrin/discordgo"
-	"github.com/eas-kaine/discord-bot/models"
 	"gorm.io/gorm"
+
+	discord "github.com/bwmarrin/discordgo"
+
+	"github.com/eas-kaine/discord-bot/models"
 )
 
 func HandleActions(s *discord.Session, m *discord.MessageCreate, DB *gorm.DB) {

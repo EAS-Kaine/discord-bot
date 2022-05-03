@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -13,18 +14,19 @@ import (
 	discord "github.com/bwmarrin/discordgo"
 
 	"github.com/eas-kaine/discord-bot/controllers"
-	"github.com/joho/godotenv"
+	"github.com/eas-kaine/discord-bot/models"
+	// "github.com/joho/godotenv"
 )
 
 var guild string
-var timeout int
 
 func Bot() {
-	err := godotenv.Load()
-	if err != nil {
-	  log.Fatal("Error loading .env file")
-	}
-  
+	// if os.Getenv("APP_ENV") != "production" {
+	// 	err := godotenv.Load()
+	// 	if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// 	}
+	// }
 	token := os.Getenv("TOKEN")
 	guild = os.Getenv("GUILD")
 
@@ -91,30 +93,46 @@ func handleCommands(s *discord.Session, m *discord.MessageCreate) {
 		controllers.HandleActions(s, m, DB)
 	} else {
 		_, url := controllers.GetAction(s, m, DB)
-		data := controllers.Validate(s, m, url)
-		// Callback 
-		if val, ok := data["callback"]; ok {
-			// Timeout
-			if c, ok := val.(map[string]int); ok {
-				timeout = c["timeout"]
-			}
-			time.Sleep(time.Duration(timeout) * time.Second)
-			s.ChannelMessageSendReply(m.ChannelID, "Time is up!", m.Reference())
-		}
+		data := controllers.Validate(s, m.Content, m.Author.Username, m.Author.ID, url, m.ChannelID, m.MessageReference)
+		
 		if  data["status_message"] == "valid_command" {
-			data := controllers.Command(s, m, url)
+
+			data := controllers.Command(s, m.Content, m.Author.Username, m.Author.ID, url, m.ChannelID)
 			msg, ok := data["discord_message"].(string)
 			if !ok {
 				log.Println("Couldn't assert discord message as string")
 			}
+
 			s.ChannelMessageSendReply(m.ChannelID, msg, m.Reference())
+
+			// Callback recieved
+			if val, ok := data["callback"]; ok {
+				body, err := json.Marshal(val)
+				if err != nil {
+					log.Print(err)
+				}
+				callback := models.Callback{}
+				if err := json.Unmarshal(body, &callback); err != nil {
+					log.Print(err)
+				}
+				time.Sleep(time.Duration(callback.Timeout) * time.Second)
+				s.ChannelMessageSendReply(m.ChannelID, "Time is up!", m.Reference())
+
+				data := controllers.Command(s, callback.Command, m.Author.Username, m.Author.ID, url, m.ChannelID)
+				msg, ok := data["discord_message"].(string)
+				if !ok {
+					log.Println("Couldn't assert discord message as string")
+				}
+
+				s.ChannelMessageSendReply(m.ChannelID, msg, m.Reference())
+			}
 		} else if msg, _ := data["discord_message"].(string); msg != "" {
 			s.ChannelMessageSendReply(m.ChannelID, msg, m.Reference())
 		} 
 		if msg, ok := data["discord_message_complex"].(discord.MessageSend); !ok {
-			fmt.Println("Couldn't get discord_message_complex?")
+			// fmt.Println("Couldn't get discord_message_complex?")
 		} else if msg.Content != "" {
 			s.ChannelMessageSendComplex(m.ChannelID, &msg)
-		}                               
+		}                            
 	}
 }

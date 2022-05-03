@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -14,8 +13,8 @@ import (
 	discord "github.com/bwmarrin/discordgo"
 )
 
-func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]interface{} {
-	cmd := strings.SplitAfter(m.Content, "!")
+func Command(s *discord.Session, m string, user string, id string, u string, c string) map[string]interface{} {
+	cmd := strings.SplitAfter(m, "!")
 	cmd = strings.Split(cmd[1], " ")
 
 	client := &http.Client{
@@ -23,16 +22,17 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 	}
 
 	req, err := http.NewRequest("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
-	fmt.Println("GET", u + "api/command/" + url.QueryEscape(strings.Join(cmd, ",")), nil)
 	if err != nil {
 		log.Println(err)
 	}
-	req.Header.Add("user", m.Author.Username)
-	req.Header.Add("role", strconv.FormatBool(Admin(s, m)))
+	// Request header
+	req.Header.Add("user", user)
+	req.Header.Add("role", strconv.FormatBool(Admin(s, id, c)))
+
+	// GET request
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err)
-		// s.ChannelMessageSend(m.ChannelID, "This service is currently unavailable")
 		return make(map[string]interface{})
 	}
 
@@ -45,7 +45,6 @@ func Command(s *discord.Session, m *discord.MessageCreate, u string) map[string]
 	if err := json.Unmarshal(bodyBytes, &dat); err != nil {
         log.Println(err)
     }
-    fmt.Println(dat)
 
 	defer resp.Body.Close()
 

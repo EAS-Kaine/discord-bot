@@ -6,8 +6,8 @@ import (
 	discord "github.com/bwmarrin/discordgo"
 )
 
-func Admin(s *discord.Session, m *discord.MessageCreate) bool {
-	perms, err := s.UserChannelPermissions(m.Author.ID, m.ChannelID)
+func Admin(s *discord.Session, u string, c string) bool {
+	perms, err := s.UserChannelPermissions(u, c)
 	if err != nil {
 		log.Println(err)
 	}
