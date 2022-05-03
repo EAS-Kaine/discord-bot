@@ -6,5 +6,6 @@ RUN go mod download
 RUN CGO_ENABLED=0 go build -a -ldflags '-s' -buildvcs=false -o app
 
 FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /tmp/go/app /bin/app
 CMD [ "/bin/app" ]
