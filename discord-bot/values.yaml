@@ -21,7 +21,12 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: "discord-bot-token-sa"
+
+annotations:
+  vault.hashicorp.com/agent-inject: "true"
+  vault.hashicorp.com/role: "discord-bot"
+  vault.hashicorp.com/agent-inject-secret-bot-token: "cubbyhole/bot"
 
 podAnnotations: {}
 
