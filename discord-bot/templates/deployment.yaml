@@ -40,7 +40,7 @@ spec:
             # - name: APP_ENV
             #   value: production
             - name: TOKEN
-              value: OTY2MDA3NjA3MTcxMTIxMjUy.Yl7esQ.5nrQ0_pSJO4lK-ibk51ZJpIn66k
+              value: {}
             - name: GUILD
               value: '965971053534933032'
           imagePullPolicy: {{ .Values.image.pullPolicy }}
