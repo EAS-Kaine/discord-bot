@@ -25,8 +25,15 @@ serviceAccount:
 
 annotations:
   vault.hashicorp.com/agent-inject: "true"
+  vault.hashicorp.com/agent-inject-status: "update"
   vault.hashicorp.com/role: "discord-bot"
-  vault.hashicorp.com/agent-inject-secret-bot-token: "cubbyhole/bot"
+  vault.hashicorp.com/agent-inject-secret-bot-token.json: "cubbyhole/bot"
+  vault.hashicorp.com/agent-inject-template-bot-token.json: |
+    {{- with secret "cubbyhole/bot" -}}
+    {
+      "BOT_TOKEN": "{{ .Data.BOT_TOKEN }}"
+    }
+    {{- end -}}
 
 podAnnotations: {}
 
