@@ -15,7 +15,7 @@ spec:
     - name: chart_name
       type: string
     - name: release_version
-      type: v1.string.0
+      type: string
     - name: release_name
       type: string
     - name: overwrite_values
@@ -45,6 +45,9 @@ spec:
         - name: source
           workspace: shared-data
     - name: deploy
+      taskRef:
+        kind: Task
+        name: helm-upgrade-from-repo
       params:
         - name: helm_repo
           value: $(params.helm_repo)
@@ -52,7 +55,11 @@ spec:
           value: $(params.chart_name)
         - name: release_version
           value: $(params.release_version)
+        - name: release_name
+          value: $(params.release_name)
         - name: overwrite_values
           value: $(params.overwrite_values)
+      runAfter:
+        - build
   workspaces:
     - name: shared-data
