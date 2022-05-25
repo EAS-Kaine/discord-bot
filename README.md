@@ -30,7 +30,7 @@ Tasked with producing microservices, which utilise a database for storage, this 
 
 - [x] Roles included in request headers
 
-- [ ] Callbacks
+- [x] Callbacks
 
 - [x] MySQL DB (Containerised?)
 
